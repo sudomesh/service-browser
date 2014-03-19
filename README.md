@@ -26,6 +26,15 @@ Specify the port and hostname where you want the server to listen in config.js.
 ./index.js
 ```
 
+# Troubleshooting #
+
+If you get an error like this:
+```
+Module version mismatch, refusing to load
+```
+
+Then ensure that you don't have any older versions of node, node-gyp or npm sitting around. Deleting older versions of node-gyp from ~/.node-gyp/ may fix this problem.
+
 # ToDo #
 
 *Currently only lists http services
