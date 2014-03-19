@@ -29,6 +29,7 @@ Specify the port and hostname where you want the server to listen in config.js.
 # Troubleshooting #
 
 If you get an error like this:
+
 ```
 Module version mismatch, refusing to load
 ```
@@ -37,10 +38,10 @@ Then ensure that you don't have any older versions of node, node-gyp or npm sitt
 
 # ToDo #
 
-*Currently only lists http services
-*Web app is super basic right now
-*When services disappear web app doesn't remove them
-*We need to check for duplicate services on the server
+* Currently only lists http services
+* Web app is super basic right now
+* When services disappear web app doesn't remove them
+* We need to check for duplicate services on the server
 
 # License #
 
