@@ -1,0 +1,30 @@
+{
+  "name": "service-browser",
+  "version": "0.0.1",
+  "description": "A web app for browsing services available on the People's Open Network",
+  "dependencies": {
+    "express": "~3.4.8",
+    "sockjs": "~0.3.8",
+    "mdns2":  "~2.1.3"
+  },
+  "repository": {
+    "type": "git",
+    "url": "http://github.com/sudomesh/service-browser.git"
+  },
+  "keywords": [
+    "mesh",
+    "service",
+    "browser",
+    "list",
+    "peoples",
+    "open",
+    "network",
+    "sudo",
+    "mDNS"
+  ],
+  "author": {
+    "name": "Marc Juul",
+    "email": "juul@sudomesh.org"
+  },
+  "license": "AGPL-3.0"
+}
