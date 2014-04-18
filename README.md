@@ -62,6 +62,56 @@ it looks like it can be fixed by installing libavahi-compat-libdnssd-dev
 ```
 sudo apt-get install libavahi-compat-libdnssd-dev
 ```
+
+If you get an error similar to the following:
+```
+npm http 200 https://registry.npmjs.org/weak/-/weak-0.2.2.tgz
+npm http GET https://registry.npmjs.org/bindings
+npm http 304 https://registry.npmjs.org/bindings
+
+> weak@0.2.2 install node_modules/weak
+> node-gyp rebuild
+
+Traceback (most recent call last):
+  File "/usr/lib/node_modules/npm/node_modules/node-gyp/gyp/gyp_main.py", line 18, in <module>
+    sys.exit(gyp.script_main())
+AttributeError: 'module' object has no attribute 'script_main'
+gyp ERR! configure error 
+gyp ERR! stack Error: `gyp` failed with exit code: 1
+gyp ERR! stack     at ChildProcess.onCpExit (/usr/lib/node_modules/npm/node_modules/node-gyp/lib/configure.js:337:16)
+gyp ERR! stack     at ChildProcess.EventEmitter.emit (events.js:98:17)
+gyp ERR! stack     at Process.ChildProcess._handle.onexit (child_process.js:789:12)
+gyp ERR! System Linux 3.11.0-15-generic
+gyp ERR! command "node" "/usr/lib/node_modules/npm/node_modules/node-gyp/bin/node-gyp.js" "rebuild"
+
+gyp ERR! node -v v0.10.15
+gyp ERR! node-gyp -v v0.12.1
+gyp ERR! not ok 
+npm ERR! weak@0.2.2 install: `node-gyp rebuild`
+npm ERR! Exit status 1
+npm ERR! 
+npm ERR! Failed at the weak@0.2.2 install script.
+npm ERR! This is most likely a problem with the weak package,
+npm ERR! not with npm itself.
+npm ERR! Tell the author that this fails on your system:
+npm ERR!     node-gyp rebuild
+npm ERR! You can get their info via:
+npm ERR!     npm owner ls weak
+npm ERR! There is likely additional logging output above.
+
+npm ERR! System Linux 3.11.0-15-generic
+npm ERR! command "node" "/usr/bin/npm" "install" "weak@0.2.2"
+npm ERR! node -v v0.10.15
+npm ERR! npm -v 1.3.23
+npm ERR! code ELIFECYCLE
+
+npm ERR! not ok code 0
+```
+this link can be helpful:
+http://stackoverflow.com/questions/21155922/error-installing-node-gyp-on-ubuntu
+
+It looks like python 2.6 might be a dependency for the mdns module, in which case the stack overflow answer allows for easy switching between 2.6 and 2.7
+
 # ToDo #
 
 * Currently only lists http services
