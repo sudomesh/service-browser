@@ -107,8 +107,21 @@ npm ERR! code ELIFECYCLE
 
 npm ERR! not ok code 0
 ```
-this link can be helpful:
+this might be helpful. From
 http://stackoverflow.com/questions/21155922/error-installing-node-gyp-on-ubuntu
+
+```
+#!/bin/bash
+#On Ubuntu Saucy:
+sudo add-apt-repository ppa:fkrull/deadsnakes
+sudo apt-get update
+sudo apt-get install python2.6
+sudo update-alternatives --install /usr/bin/python python /usr/bin/python2.6 20
+sudo update-alternatives --install /usr/bin/python python /usr/bin/python2.7 10
+
+#you can switch between 2.6 & 2.7 using:
+sudo update-alternatives --config python
+```
 
 It looks like python 2.6 might be a dependency for the mdns module, in which case the stack overflow answer allows for easy switching between 2.6 and 2.7
 
