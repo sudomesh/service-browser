@@ -28,12 +28,12 @@ function service_up(service) {
     service.host = service.host.replace(/\.$/, '');
 
     var el = document.createElement('P');
-    if(service.port == 80) {
-        el.innerHTML = '<a href="http://'+service.host+'/">'+service.fullname + ' - ' + service.host + ' - ' + service.port + '</a>';        
-    } else if(service.port == 443) {
-        el.innerHTML = '<a href="https://'+service.host+'/">'+service.fullname + ' - ' + service.host + ' - ' + service.port + '</a>';        
+    if(service.type.name === 'http') { 
+      el.innerHTML = '<a href="http://'+service.host+':'+service.port+'/">'+service.fullname + ' - ' + service.host + ' - ' + service.port + '</a>';        
+    } else if(service.type.name === 'https') {
+      el.innerHTML = '<a href="https://'+service.host+':'+service.port+'/">'+service.fullname + ' - ' + service.host + ' - ' + service.port + '</a>';        
     } else {
-        el.innerHTML = service.fullname + ' - ' + service.host + ' - ' + service.port;
+      el.innerHTML = service.fullname + ' - ' + service.host + ' - ' + service.port;
     }
     $('#services').append(el);
 }
