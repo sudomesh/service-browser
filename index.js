@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 /*
-  Copyright 2014 Marc Juul
+  Copyright 2014 Marc Juul and MaxB
   License: AGPLv3
 
   This file is part of service-browser.

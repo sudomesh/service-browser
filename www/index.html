@@ -3,10 +3,7 @@
   <head>
     <title>People's Open Service Browser</title>
     <link type="text/css" rel="stylesheet" media="all" href="css/index.css" />
-    <script type="text/javascript" src="js/jquery.js"></script>
-    <script type="text/javascript" src="js/jquery.cookie.js"></script>
-    <script type="text/javascript" src="js/json2.js"></script>
-    <script type="text/javascript" src="js/sockjs.js"></script>
+
   </head>
   <body>
 
@@ -15,7 +12,18 @@
     <div id="services">
       <p>Listening for services.</p>
     </div>
+    <script data-main="js/app" src="js/lib/require-v2.1.11.js"></script>
 
-    <script type="text/javascript" src="js/index.js"></script>
+    <script id="service-template" type="text/x-handlebars-template">
+      <div class="service" data-id="{{fullname}}">
+        <h1>{{name}}</h1>
+        <div class="body">
+          {{#if link}}
+          <a href="{{link.url}}">{{link.name}}</a>
+          {{/if}}
+          {{info}}
+        </div>
+      </div>
+    </script>
   </body>
 </html>

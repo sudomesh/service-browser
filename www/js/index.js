@@ -23,19 +23,35 @@
 */
 
 console.log("web app initialized");
+var serviceTemplateSource   = $("#service-template").html();
+var serviceTemplate = Handlebars.compile(serviceTemplateSource);
 
 function service_up(service) {
-    service.host = service.host.replace(/\.$/, '');
+    if (service.txtRecord.scope === "peoplesopen.net") {
+      service.host = service.host.replace(/\.$/, '');
 
-    var el = document.createElement('P');
-    if(service.type.name === 'http') { 
-      el.innerHTML = '<a href="http://'+service.host+':'+service.port+'/">'+service.fullname + ' - ' + service.host + ' - ' + service.port + '</a>';        
-    } else if(service.type.name === 'https') {
-      el.innerHTML = '<a href="https://'+service.host+':'+service.port+'/">'+service.fullname + ' - ' + service.host + ' - ' + service.port + '</a>';        
-    } else {
-      el.innerHTML = service.fullname + ' - ' + service.host + ' - ' + service.port;
+      var link = false;
+      if(service.type.name === 'http') { 
+        link = {
+          url: 'http://'+service.host+':'+service.port+'/',
+          name: service.name
+        };
+      } else if(service.type.name === 'https') {
+        link = {
+          url: 'https://'+service.host+':'+service.port+'/',
+          name: service.name
+        };
+      } 
+      var context = {
+        link: link,
+        name: service.name,
+        fullname: service.fullname
+      }
+
+      var html = serviceTemplate(context);
+
+      $('#services').append(html);
     }
-    $('#services').append(el);
 }
 
 function service_down(service) {

@@ -1,5 +1,5 @@
 
 module.exports = {
-    hostname: 'localhost',
-    port: 7777
+    hostname: 'mini.local',
+    port: 8080
 };
