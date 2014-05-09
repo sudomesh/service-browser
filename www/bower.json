@@ -1,0 +1,34 @@
+{
+  "name": "service-browser",
+  "main": "index.js",
+  "version": "0.0.0",
+  "homepage": "https://github.com/sudomesh/service-browser",
+  "authors": [
+    "marc juul <juul@labitat.dk> maxb <maxb.personal@gmail.com>"
+  ],
+  "description": "Service Browser for PeoplesOpen.net services.",
+  "moduleType": [
+    "node"
+  ],
+  "keywords": [
+    "sudomesh",
+    "peoplesopen.net"
+  ],
+  "license": "AGPLv3",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "bootstrap": "~3.1.1",
+    "jquery.cookie": "~1.4.1",
+    "sockjs": "~0.3.4",
+    "handlebars": "~1.3.0",
+    "json2": "*",
+    "requirejs": "~2.1.11",
+    "jquery": "~2.1.1"
+  }
+}

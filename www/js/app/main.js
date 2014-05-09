@@ -21,7 +21,7 @@
   If not, see <http://www.gnu.org/licenses/>.
 */
 
-define(["jquery", "jquery.cookie", "sockjs", "json2", "handlebars-v1.3.0"], function($) {
+define(["jquery", "jquery.cookie", "sockjs", "json2", "handlebars"], function($) {
   $(function() {
         
     console.log("web app initialized");
