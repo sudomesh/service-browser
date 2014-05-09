@@ -2,20 +2,25 @@
 <html>
   <head>
     <title>People's Open Service Browser</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <link type="text/css" rel="stylesheet" media="all" href="css/index.css" />
+    <link type="text/css" rel="stylesheet" media="all" href="bower_components/bootstrap/dist/css/bootstrap.css" />
 
   </head>
+
   <body>
 
-    <h3>People's Open Service Browser</h3>
+    <h2>People's Open Service Browser</h2>
 
-    <div id="services">
+    <div id="services" class="container-fluid">
       <p>Listening for services.</p>
+      <div class="row-fluid services-container">
+      </div>
     </div>
     <script data-main="js/config" src="bower_components/requirejs/require.js"></script>
 
     <script id="service-template" type="text/x-handlebars-template">
-      <div class="service" data-id="{{fullname}}">
+      <div class="service-box col-md-3" data-id="{{fullname}}">
         <h1>{{name}}</h1>
         <div class="body">
           {{#if link}}

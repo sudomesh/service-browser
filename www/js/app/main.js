@@ -25,7 +25,7 @@ define(["jquery", "jquery.cookie", "sockjs", "json2", "handlebars"], function($)
   $(function() {
         
     console.log("web app initialized");
-    var serviceTemplateSource   = $("#service-template").html();
+    var serviceTemplateSource = $("#service-template").html();
     var serviceTemplate = Handlebars.compile(serviceTemplateSource);
 
     function service_up(service) {
@@ -52,7 +52,7 @@ define(["jquery", "jquery.cookie", "sockjs", "json2", "handlebars"], function($)
 
         var html = serviceTemplate(context);
 
-        $('#services').append(html);
+        $('.services-container').append(html);
       }
     }
 
