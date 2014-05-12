@@ -30,6 +30,7 @@ var http = require('http');
 var express = require('express');
 var sockjs = require('sockjs');
 var mdns = require('mdns2');
+var _ = require('lodash-node');
 
 var config = require('./config.js');
 
@@ -60,19 +61,37 @@ function send_all_services(client) {
         }));
     }
 }
-
+function checkContains(service) {
+    // Check to see if we already have it in our services list
+    if (_.find(services, function(s) {
+      return s.unique === service.unique;
+    })) {
+      return false;
+    } else {
+      return true;
+    }
+}
 // only allow services of the types we're interested in
 function filter(service) {
     return service;
+}
+
+function createUnique(service) {
+    // TODO: This might accidentally remove other services with same name and type on different hosts - we're not 
+    // getting enough info back from mdns in case of serviceDown
+    return service.replyDomain + service.type.protocol + '.' + service.type.name + '.' + service.name.replace(/ /, ''); 
 }
 
 // TODO need to listen for all service types
 // dev note: try udisks-ssh instead of http
 var browser = mdns.createBrowser(mdns.makeServiceType('http', 'tcp'));
 browser.on('serviceUp', function(service) {
+    console.log('service coming up: ');
     console.log(service);
-    services.push(service);
-    if(filter(service)) {
+    // We have to create a unique id becuase we don't have a good one from mdns2
+    service.unique = createUnique(service);
+    if(checkContains(service) && filter(service)) {
+        services.push(service);
         broadcast({
             type: 'service',
             action: 'up',
@@ -81,17 +100,19 @@ browser.on('serviceUp', function(service) {
     }
 });
 browser.on('serviceDown', function(service) {
+    console.log('service coming down: ');
     console.log(service);
+    // We have to create a unique id because we're not being handed one from mdns2
+    service.unique = createUnique(service);
     if(filter(service)) {
         broadcast({
             type: 'service',
             action: 'down',
             service: service
         });
-    }
-    var i = services.indexOf(service);
-    if(i && (i >= 0)) {
-        services.splice(i, 1); // remove the service
+        services = _.filter(services, function(s) {
+          return service.unique !== s.unique;
+        });
     }
 });
 browser.start();

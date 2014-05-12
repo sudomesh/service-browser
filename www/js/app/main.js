@@ -31,7 +31,7 @@ define(["jquery", "jquery.cookie", "sockjs", "json2", "handlebars", "lodash"], f
     var services = {};
 
     function service_up(service) {
-      var containsService = _.contains(_.keys(services), service.fullname);
+      var containsService = _.contains(_.keys(services), service.unique);
       if (service.txtRecord.scope === "peoplesopen.net" && !containsService) {
         service.host = service.host.replace(/\.$/, '');
 
@@ -50,19 +50,19 @@ define(["jquery", "jquery.cookie", "sockjs", "json2", "handlebars", "lodash"], f
         var context = {
           link: link,
           name: service.name,
-          fullname: service.fullname
+          id: service.unique
         }
 
         var html = serviceTemplate(context);
 
         $('.services-container').append(html);
 
-        services[service.fullname] = service;
+        services[service.uniqeId] = service;
       }
     }
 
     function service_down(service) {
-      var removeNode = $('#services[data-fullname="' + service.fullname + '"]');
+      var removeNode = $('.service-box[data-id="' + service.unique + '"]');
       if (removeNode.length > 0 ) {
         removeNode.remove();
       }
