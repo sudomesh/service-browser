@@ -21,15 +21,18 @@
   If not, see <http://www.gnu.org/licenses/>.
 */
 
-define(["jquery", "jquery.cookie", "sockjs", "json2", "handlebars"], function($) {
+define(["jquery", "jquery.cookie", "sockjs", "json2", "handlebars", "lodash"], function($) {
   $(function() {
         
     console.log("web app initialized");
     var serviceTemplateSource = $("#service-template").html();
     var serviceTemplate = Handlebars.compile(serviceTemplateSource);
 
+    var services = {};
+
     function service_up(service) {
-      if (service.txtRecord.scope === "peoplesopen.net") {
+      var containsService = _.contains(_.keys(services), service.fullname);
+      if (service.txtRecord.scope === "peoplesopen.net" && !containsService) {
         service.host = service.host.replace(/\.$/, '');
 
         var link = false;
@@ -53,33 +56,41 @@ define(["jquery", "jquery.cookie", "sockjs", "json2", "handlebars"], function($)
         var html = serviceTemplate(context);
 
         $('.services-container').append(html);
+
+        services[service.fullname] = service;
       }
     }
 
     function service_down(service) {
-      // TODO implement this
-      console.log("service down handling un-implemented");
+      var removeNode = $('#services[data-fullname="' + service.fullname + '"]');
+      if (removeNode.length > 0 ) {
+        removeNode.remove();
+      }
     }
-
 
     var sock = new SockJS('/websocket');
 
     sock.onopen = function() {
       console.log('open');
     };
+
     sock.onmessage = function(e) {
+      console.log(e);
       var data = JSON.parse(e.data);;
+      console.log(data);
       if(data.type == 'service') {
 
         if(data.action == 'up') {
           service_up(data.service);
-        } else if(e.data.action == 'down') {
+        } else if(data.action == 'down') {
           service_down(data.service);
         }
       }
     };
+
     sock.onclose = function() {
       console.log('close');
     };  
+
   });
 });

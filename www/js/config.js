@@ -9,7 +9,8 @@ requirejs.config({
         handlebars: "../bower_components/handlebars/handlebars",
         bootstrap: "../bower_components/bootstrap/dist/js/bootstrap",
         requirejs: "../bower_components/requirejs/require",
-        jquery: "../bower_components/jquery/dist/jquery"
+        jquery: "../bower_components/jquery/dist/jquery",
+        lodash: "../bower_components/lodash/dist/lodash.compat"
     },
     shim: {
         "jquery.cookie": [
