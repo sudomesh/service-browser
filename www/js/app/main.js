@@ -50,7 +50,8 @@ define(["jquery", "jquery.cookie", "sockjs", "json2", "handlebars", "lodash"], f
         var context = {
           link: link,
           name: service.name,
-          id: service.unique
+          id: service.unique,
+          description: service.txtRecord.description
         }
 
         var html = serviceTemplate(context);

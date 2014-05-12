@@ -21,12 +21,18 @@
 
     <script id="service-template" type="text/x-handlebars-template">
       <div class="service-box col-md-3" data-id="{{id}}">
-        <h1>{{name}}</h1>
-        <div class="body">
-          {{#if link}}
-          <a href="{{link.url}}">{{link.name}}</a>
-          {{/if}}
-          {{info}}
+        <div class="service-inner">
+          <h1>{{name}}</h1>
+          <div class="body">
+            {{#if link}}
+            <a href="{{link.url}}">{{link.name}}</a>
+            {{/if}}
+            {{#if description}}
+            <p>
+            {{description}}
+            </p>
+            {{/if}}
+          </div>
         </div>
       </div>
     </script>
