@@ -10,7 +10,6 @@
 }
 
 .services-container .column {
-  display: inline-block;
 }
 
 .service-inner {
@@ -39,6 +38,10 @@
 }
 
 .service-box:hover {
+}
+
+.service-box .body a {
+  font-size: 1.4em;
 }
 
 .service-box .glyphicon {
