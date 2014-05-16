@@ -1,3 +1,22 @@
+.logo h1 {
+  font-family: "Dosis", sans-serif;
+  text-align: center;
+  font-size: 5em;
+  margin-bottom: 20px;
+}
+
+.logo h1 .green {
+  color: #20b24b;
+}
+
+.logo h1 .bolder {
+  font-weight: 600;
+}
+
+.services-container .column {
+  display: inline-block;
+}
+
 .service-inner {
   background-color: rgb(243, 243, 243);
   padding: 5%;
@@ -9,9 +28,25 @@
   opacity: 1;
 }
 
+.service-inner .icon-container {
+  display: block;
+  position: absolute;
+  bottom: 0;
+  right: 10px;
+  font-size: 1.3em;
+}
+
 .service-box {
+  margin-top: 20px;
+  position: relative;
   
 }
 
 .service-box:hover {
 }
+
+.service-box .glyphicon {
+  color: #20b24b;
+}
+
+

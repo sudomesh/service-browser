@@ -79,7 +79,7 @@ function filter(service) {
 function createUnique(service) {
     // TODO: This might accidentally remove other services with same name and type on different hosts - we're not 
     // getting enough info back from mdns in case of serviceDown
-    return service.replyDomain + service.type.protocol + '.' + service.type.name + '.' + service.name.replace(/ /, ''); 
+    return service.replyDomain + service.type.protocol + '.' + encodeURIComponent(service.type.name) + '.' + service.name.replace(/ /, ''); 
 }
 
 // TODO need to listen for all service types

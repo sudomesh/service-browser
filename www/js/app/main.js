@@ -21,12 +21,33 @@
   If not, see <http://www.gnu.org/licenses/>.
 */
 
-define(["jquery", "jquery.cookie", "sockjs", "json2", "handlebars", "lodash"], function($) {
+var ServiceBrowser = window.ServiceBrowser || {};
+ServiceBrowser.icons = ServiceBrowser.icons || {};
+
+ServiceBrowser.template = ServiceBrowser.template || {};
+
+if (typeof ServiceBrowser.columns === 'undefined') {
+  ServiceBrowser.template.columnNum = 4;
+}
+
+ServiceBrowser.template.columns = [];
+ServiceBrowser.template.columnWidth = 12 / ServiceBrowser.template.columnNum;
+for (var i=1; i<=ServiceBrowser.template.columnNum; i++) {
+  ServiceBrowser.template.columns.push({});
+}
+
+
+define(["jquery", "jquery.cookie", "sockjs", "json2", "handlebars", "lodash", "app/config"], function($) {
   $(function() {
         
     console.log("web app initialized");
-    var serviceTemplateSource = $("#service-template").html();
+    var columnsTemplateSource = $('#columns-template').html();
+    var columnsTemplate = Handlebars.compile(columnsTemplateSource)(ServiceBrowser.template);
+    $('.services-container').html(columnsTemplate);
+
+    var serviceTemplateSource = $('#service-template').html();
     var serviceTemplate = Handlebars.compile(serviceTemplateSource);
+
 
     var services = {};
 
@@ -47,22 +68,42 @@ define(["jquery", "jquery.cookie", "sockjs", "json2", "handlebars", "lodash"], f
             name: service.name
           };
         } 
+
+        var serviceClass = undefined;
+
+        if (typeof service.txtRecord === 'object' &&
+            typeof service.txtRecord.type === 'string' && 
+            typeof ServiceBrowser.icons === 'object' &&
+            typeof ServiceBrowser.icons[service.txtRecord.type] === 'string') {
+          serviceClass = ServiceBrowser.icons[service.txtRecord.type];
+        }
+
+          
         var context = {
           link: link,
           name: service.name,
           id: service.unique,
-          description: service.txtRecord.description
+          description: service.txtRecord.description,
+          serviceClass: serviceClass,
+          columnNum: ServiceBrowser.columns
         }
 
         var html = serviceTemplate(context);
 
-        $('.services-container').append(html);
+        var column = _.size(services) % ServiceBrowser.template.columnNum;
 
-        services[service.uniqeId] = service;
+        services[service.unique] = service;
+
+
+        $('.services-container .column.col-' + column).append(html);
       }
     }
 
     function service_down(service) {
+      if (typeof service.uniqueId === 'string' &&
+          services[service.uniqueId] === 'object') {
+        delete services[service.uniqueId];
+      }
       var removeNode = $('.service-box[data-id="' + service.unique + '"]');
       if (removeNode.length > 0 ) {
         removeNode.remove();

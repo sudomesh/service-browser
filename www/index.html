@@ -1,8 +1,9 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>People's Open Service Browser</title>
+    <title>PeoplesOpen.net Service Browser</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href='http://fonts.googleapis.com/css?family=Dosis:400,600,700' rel='stylesheet' type='text/css'>
     <link type="text/css" rel="stylesheet" media="all" href="css/index.css" />
     <link type="text/css" rel="stylesheet" media="all" href="bower_components/bootstrap/dist/css/bootstrap.css" />
 
@@ -10,18 +11,31 @@
 
   <body>
 
-    <h2>People's Open Service Browser</h2>
+    <span class="logo">
+      <h1>PeoplesOpen.<span class="green">net</span> <span class="bolder">Service Browser</span></h1>
+    </span>
 
     <div id="services" class="container-fluid">
-      <p>Listening for services.</p>
       <div class="row-fluid services-container">
       </div>
     </div>
+
     <script data-main="js/config" src="bower_components/requirejs/require.js"></script>
 
+    <script id="columns-template" type="text/x-handlebars-template">
+      {{#each columns}}
+        <div class="column col-{{@index}} col-md-{{../columnWidth}}"></div>
+      {{/each}}
+    </script>
+
     <script id="service-template" type="text/x-handlebars-template">
-      <div class="service-box col-md-3" data-id="{{id}}">
+      <div class="service-box" data-id="{{id}}">
         <div class="service-inner">
+          {{#if serviceClass}}
+          <span class="icon-container">
+            <span class="{{serviceClass}}"></span>
+          </span>
+          {{/if}}
           <h1>{{name}}</h1>
           <div class="body">
             {{#if link}}
