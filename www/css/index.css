@@ -42,6 +42,11 @@
 
 .service-box .body a {
   font-size: 1.4em;
+  color: #627EA0;
+}
+
+.service-box .body a:hover {
+  color: #253E53;
 }
 
 .service-box .glyphicon {
