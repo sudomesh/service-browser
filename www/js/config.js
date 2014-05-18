@@ -10,7 +10,8 @@ requirejs.config({
         bootstrap: "../bower_components/bootstrap/dist/js/bootstrap",
         requirejs: "../bower_components/requirejs/require",
         jquery: "../bower_components/jquery/dist/jquery",
-        lodash: "../bower_components/lodash/dist/lodash.compat"
+        lodash: "../bower_components/lodash/dist/lodash.compat",
+        less: "../bower_components/less/dist/less-1.7.0"
     },
     shim: {
         "jquery.cookie": [

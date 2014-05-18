@@ -26,6 +26,21 @@ Specify the port and hostname where you want the server to listen in config.js.
 ./index.js
 ```
 
+# Bower/RequireJS #
+
+service-browser uses bower and requirejs to manage javascript front-end dependencies. 
+If you wanted to install LESS, for example, you would go to the www/ folder and run the following:
+
+```
+../node_modules/bower/bin/bower install --save less
+```
+
+and then you would add less to the following:
+```
+define(["jquery", "jquery.cookie", "sockjs", "json2", "handlebars", "less", "lodash", "app/config"], function($) {
+```
+
+
 # Troubleshooting #
 
 If you get an error like this:

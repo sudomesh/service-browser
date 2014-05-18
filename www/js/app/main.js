@@ -37,7 +37,7 @@ for (var i=1; i<=ServiceBrowser.template.columnNum; i++) {
 }
 
 
-define(["jquery", "jquery.cookie", "sockjs", "json2", "handlebars", "lodash", "app/config"], function($) {
+define(["jquery", "jquery.cookie", "less", "sockjs", "json2", "handlebars", "lodash", "app/config"], function($) {
   $(function() {
         
     console.log("web app initialized");
