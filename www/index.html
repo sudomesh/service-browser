@@ -31,8 +31,12 @@
     <script id="service-template" type="text/x-handlebars-template">
       <div class="service-box" data-id="{{id}}">
         <div class="service-inner">
+          <span class="vote-icon-container">
+            <span class="glyphicon glyphicon-minus"></span>
+            <span class="glyphicon glyphicon-plus"></span>
+          <span>
           {{#if serviceClass}}
-          <span class="icon-container">
+          <span class="type-icon-container">
             <span class="{{serviceClass}}"></span>
           </span>
           {{/if}}
