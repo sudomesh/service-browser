@@ -3,7 +3,7 @@ var less = require('gulp-less');
 var path = require('path');
 
 gulp.task('less', function () {
-  return gulp.src('./www/css/*.less')
+  return gulp.src('./www/css/**')
     .pipe(less({
       paths: [ path.join(__dirname, 'less', 'includes') ]
     }))

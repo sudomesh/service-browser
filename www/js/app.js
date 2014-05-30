@@ -21,39 +21,39 @@
   If not, see <http://www.gnu.org/licenses/>.
 */
 
-var $ = jQuery = require('jquery')
-var SockJS = require('sockjs-client')
-var JSON = require('json2')
-var serviceTemplate = require('../templates/service.html');
-var columnsTemplate = require('../templates/columns.html');
-var _ = require('lodash')
-var config = require('./config')
+var $ = jQuery = require('jquery');
+var SockJS = require('sockjs-client');
+//var JSON = require('json2');
+var _ = require('lodash');
+var config = require('./config');
 
 var cssify = require('cssify');
-cssify.byUrl('build/app.css');
+cssify.byUrl('build/index.css');
 
 var ServiceBrowser = window.ServiceBrowser || {};
 ServiceBrowser.icons = ServiceBrowser.icons || {};
 
-ServiceBrowser.template = ServiceBrowser.template || {};
+ServiceBrowser.thisUrl = window.location.protocol + "//" + window.location.host;
+ServiceBrowser.templateConfig = ServiceBrowser.templateConfig || {};
 
 if (typeof ServiceBrowser.columns === 'undefined') {
-  ServiceBrowser.template.columnNum = 4;
+  ServiceBrowser.templateConfig.columnNum = 4;
 }
 
-ServiceBrowser.template.columns = [];
-ServiceBrowser.template.columnWidth = 12 / ServiceBrowser.template.columnNum;
-for (var i=1; i<=ServiceBrowser.template.columnNum; i++) {
-  ServiceBrowser.template.columns.push({});
-}
+ServiceBrowser.templateConfig.columns = [];
+ServiceBrowser.templateConfig.columnWidth = 12 / ServiceBrowser.templateConfig.columnNum;
+for (var i=1; i<=ServiceBrowser.templateConfig.columnNum; i++) {
+  ServiceBrowser.templateConfig.columns.push({});
+};
 
+ServiceBrowser.templates = {
+  serviceTemplate: require('../templates/service.html'),
+  columnsTemplate: require('../templates/columns.html'),
+};
 
 $(function() {
       
-  console.log("web app initialized");
-  var columnsTemplateSource = $('#columns-template').html();
-  var columnsTemplate = Handlebars.compile(columnsTemplateSource)(ServiceBrowser.template);
-  $('.services-container').html(columnsTemplate);
+  $('.services-container').html(ServiceBrowser.templates.columnsTemplate(ServiceBrowser.templateConfig));
 
   var services = {};
 
@@ -94,7 +94,7 @@ $(function() {
         columnNum: ServiceBrowser.columns
       }
 
-      var html = serviceTemplate(context);
+      var html = ServiceBrowser.templates.serviceTemplate(context);
 
       var column = _.size(services) % ServiceBrowser.template.columnNum;
 
@@ -116,7 +116,7 @@ $(function() {
     }
   }
 
-  var sock = new SockJS('/websocket');
+  var sock = new SockJS.create(ServiceBrowser.thisUrl + '/websocket');
 
   sock.onopen = function() {
     console.log('open');

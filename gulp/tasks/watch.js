@@ -8,8 +8,9 @@ gulp.task('watch', function() {
 		server.changed(file.path);
 	};
 
-	gulp.watch('src/javascript/**', ['browserify']);
-	gulp.watch('src/sass/**', ['compass']);
-	gulp.watch('src/images/**', ['images']);
+	gulp.watch('www/js/**', ['browserify']);
+	gulp.watch('www/templates/**', ['browserify']);
+	gulp.watch('www/css/**', ['less']);
+	gulp.watch('www/img/**', ['images']);
 	gulp.watch(['build/**']).on('change', reload);
 });
