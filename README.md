@@ -109,7 +109,7 @@ anything that doesn't exist in npm as well as css packages (like bootstrap)
 
 To install a new package, cd into ./www and then run
 ```
-../node_modules/bin/bower.js install --save bootstrap
+../node_modules/bin/bower install --save bootstrap
 ```
 where bootstrap is the package you want to install and --save saves it to bower.json
 
