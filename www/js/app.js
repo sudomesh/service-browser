@@ -26,6 +26,7 @@ var SockJS = require('sockjs-client');
 //var JSON = require('json2');
 var _ = require('lodash');
 var config = require('./config');
+var Modernizr = require('modernizr');
 
 var cssify = require('cssify');
 cssify.byUrl('build/index.css');

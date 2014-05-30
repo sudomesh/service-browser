@@ -32,6 +32,7 @@
   "license": "AGPL-3.0",
   "browser": {
     "jquery-cookie": "./www/bower_components/jquery.cookie/jquery.cookie.js",
+    "modernizr": "./www/bower_components/modernizr/modernizr.js",
     "sockjs-client": "./www/bower_components/sockjs/sockjs.js"
   },
   "browserify": {
@@ -49,6 +50,9 @@
     },
     "sockjs-client": {
       "exports": "SockJS"
+    },
+    "modernizr": {
+      "exports": "Modernizr"
     }
   },
   "devDependencies": {
