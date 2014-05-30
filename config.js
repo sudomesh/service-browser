@@ -1,5 +1,5 @@
 
 module.exports = {
-    hostname: '192.168.2.174',
-    port: 8080
+    hostname: '127.0.0.1',
+    port: 8000
 };

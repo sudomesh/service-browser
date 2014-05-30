@@ -29,31 +29,29 @@ var config = require('./config');
 
 var cssify = require('cssify');
 cssify.byUrl('build/index.css');
+cssify.byUrl('build/imports.css');
 
-var ServiceBrowser = window.ServiceBrowser || {};
-ServiceBrowser.icons = ServiceBrowser.icons || {};
+config.thisUrl = window.location.protocol + "//" + window.location.host;
+config.templateConfig = config.templateConfig || {};
 
-ServiceBrowser.thisUrl = window.location.protocol + "//" + window.location.host;
-ServiceBrowser.templateConfig = ServiceBrowser.templateConfig || {};
-
-if (typeof ServiceBrowser.columns === 'undefined') {
-  ServiceBrowser.templateConfig.columnNum = 4;
+if (typeof config.columns === 'undefined') {
+  config.templateConfig.columnNum = 4;
 }
 
-ServiceBrowser.templateConfig.columns = [];
-ServiceBrowser.templateConfig.columnWidth = 12 / ServiceBrowser.templateConfig.columnNum;
-for (var i=1; i<=ServiceBrowser.templateConfig.columnNum; i++) {
-  ServiceBrowser.templateConfig.columns.push({});
+config.templateConfig.columns = [];
+config.templateConfig.columnWidth = 12 / config.templateConfig.columnNum;
+for (var i=1; i<=config.templateConfig.columnNum; i++) {
+  config.templateConfig.columns.push({});
 };
 
-ServiceBrowser.templates = {
+config.templates = {
   serviceTemplate: require('../templates/service.html'),
   columnsTemplate: require('../templates/columns.html'),
 };
 
 $(function() {
       
-  $('.services-container').html(ServiceBrowser.templates.columnsTemplate(ServiceBrowser.templateConfig));
+  $('.services-container').html(config.templates.columnsTemplate(config.templateConfig));
 
   var services = {};
 
@@ -79,9 +77,9 @@ $(function() {
 
       if (typeof service.txtRecord === 'object' &&
           typeof service.txtRecord.type === 'string' && 
-          typeof ServiceBrowser.icons === 'object' &&
-          typeof ServiceBrowser.icons[service.txtRecord.type] === 'string') {
-        serviceClass = ServiceBrowser.icons[service.txtRecord.type];
+          typeof config.icons === 'object' &&
+          typeof config.icons[service.txtRecord.type] === 'string') {
+        serviceClass = config.icons[service.txtRecord.type];
       }
 
         
@@ -91,12 +89,12 @@ $(function() {
         id: service.unique,
         description: service.txtRecord.description,
         serviceClass: serviceClass,
-        columnNum: ServiceBrowser.columns
+        columnNum: config.columns
       }
 
-      var html = ServiceBrowser.templates.serviceTemplate(context);
+      var html = config.templates.serviceTemplate(context);
 
-      var column = _.size(services) % ServiceBrowser.template.columnNum;
+      var column = _.size(services) % config.templateConfig.columnNum;
 
       services[service.unique] = service;
 
@@ -116,7 +114,8 @@ $(function() {
     }
   }
 
-  var sock = new SockJS.create(ServiceBrowser.thisUrl + '/websocket');
+  //var sock = new SockJS.create(config.thisUrl + '/websocket');
+  var sock = new SockJS('/websocket');
 
   sock.onopen = function() {
     console.log('open');
