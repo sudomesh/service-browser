@@ -24,6 +24,5 @@
   },
   "_source": "git://github.com/carhartl/jquery-cookie.git",
   "_target": "~1.4.1",
-  "_originalSource": "jquery.cookie",
-  "_direct": true
+  "_originalSource": "jquery.cookie"
 }

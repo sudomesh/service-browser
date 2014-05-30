@@ -1,5 +1,5 @@
 {
   "scripts": {
-    "postinstall": "../node_modules/bower-requirejs/bin/bower-requirejs -c js/config.js"
+    "postinstall": ""
   }
 }

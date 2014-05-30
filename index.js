@@ -30,7 +30,7 @@ var http = require('http');
 var express = require('express');
 var sockjs = require('sockjs');
 var mdns = require('mdns2');
-var _ = require('lodash-node');
+var _ = require('lodash');
 
 var config = require('./config.js');
 
