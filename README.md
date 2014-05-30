@@ -16,6 +16,12 @@ cd service-browser/
 npm install
 ```
 
+# Build #
+
+```
+./node_modules/gulp/bin/gulp.js
+```
+
 # Setup #
 
 Specify the port and hostname where you want the server to listen in config.js.
@@ -26,19 +32,95 @@ Specify the port and hostname where you want the server to listen in config.js.
 ./index.js
 ```
 
-# Bower/RequireJS #
+# Gulp/Browserify/Bower #
 
-service-browser uses bower and requirejs to manage javascript front-end dependencies. 
-If you wanted to install LESS, for example, you would go to the www/ folder and run the following:
+service-browser uses Gulp, Browserify, and Bower to manage front-end dependencies.
+So this means that you can use npm packages inside of client-side javascript
+There's pretty decent documentation for these modules all over the internets.
+
+## Gulp ##
+
+Gulp is a javascript build system/task manager. By running `./node_modules/gulp/bin/gulp.js` you are 
+running the `./gulp/tasks/default.js` task which runs a build and then watch task.
+The build task will optimize images, compile LESS and run browserify.
+
+All of the tasks are under  `./gulp/tasks`. You can run any individual tasks by running:
+`./node_modules/gulp/bin/gulp.js build` where build is the name of the task you'd want to run
+
+
+## Browserify ##
+
+Browserify is a nifty tool which lets you use CommonJS require syntax to pull in npm modules into
+client-side JS. Thanks substack!
+Most of the magic is inside of `./gulp/tasks/browserify.js`
+
+Say you wanted to use lodash (an underscore analog) in a client-side script. You could do the following
+`npm install --save lodash` (use --save if you want to add the module to package.json)
+Then inside your client-side JS, you could do the following:
+
+````
+var _ = require('lodash')
+console.log(_)
+```
+
+We also make pretty significant use of browserify-shim, which lets us include packages that aren't 
+installable via npm. This is mostly setup inside of `./package.json`. The relevant passage looks 
+similar to:
 
 ```
-../node_modules/bower/bin/bower install --save less
+  "browser": {
+    "jquery-cookie": "./www/bower_components/jquery.cookie/jquery.cookie.js",
+    "sockjs-client": "./www/bower_components/sockjs/sockjs.js"
+  },
+  "browserify": {
+    "transform": [
+      "browserify-shim",
+      "hbsfy"
+    ]
+  },
+  "browserify-shim": {
+    "jquery-cookie": {
+      "depends": [
+        "jquery:$"
+      ],
+      "exports": "jquery.cookie"
+    },
+    "sockjs-client": {
+      "exports": "SockJS"
+    }
+  }
+```
+The values of "browser" are key value pairs where the key is the require() name and the value
+is the location of the package
+
+"browserify-shim" delineates the specifics of each of the shimmed packages. There is a field 
+for what the package depends on and what it exports. That would be the result of the assignment
+```
+var variable = require('sockjs-client')
 ```
 
-and then you would add less to the following:
+The location of the package can be anywhere, although I've been mostly using bower to install
+3rd party packages, which brings us to....
+
+
+## Bower ##
+Bower is a fairly generic and unopinionated front-end package manager. I've been using it to install
+anything that doesn't exist in npm as well as css packages (like bootstrap)
+
+To install a new package, cd into ./www and then run
 ```
-define(["jquery", "jquery.cookie", "sockjs", "json2", "handlebars", "less", "lodash", "app/config"], function($) {
+../node_modules/bin/bower.js install --save bootstrap
 ```
+where bootstrap is the package you want to install and --save saves it to bower.json
+
+There are a variety of ways you can now use these packages:
+
+- browserify-shim: see above 
+- less/css: inside of `./www/css/imports.less` you'll see the lines:
+```
+  @import "../bower_components/bootstrap/less/bootstrap.less";
+```
+That will import the bootstrap less file, which will then be compiled by browserify, etc. 
 
 
 # Troubleshooting #
@@ -144,7 +226,6 @@ It looks like python 2.6 might be a dependency for the mdns module, in which cas
 
 * Currently only lists http services
 * Web app is super basic right now
-* When services disappear web app doesn't remove them
 * We need to check for duplicate services on the server
 
 # License #
