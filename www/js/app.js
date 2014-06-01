@@ -51,13 +51,55 @@ config.templates = {
 };
 
 $(function() {
-      
+  var handlers = function() {
+    $('.vote-icon-container .order-icon').off('click');
+    $('.vote-icon-container .order-icon').on('click', function(e) {
+      var id = $(this).data('id');
+      var val = parseInt($(this).data('val'), 10);
+      try {
+        localStorage.peoplesOpenDotNet[id].order += val;
+      } catch (e) {
+        if (typeof localStorage.peoplesOpenDotNet === "undefined") {
+          localStorage.peoplesOpenDotNet = {};
+        }
+        if (typeof localStorage.peoplesOpenDotNet[id] === "undefined") {
+          localStorage.peoplesOpenDotNet[id] = {};
+        }
+        if (typeof localStorage.peoplesOpenDotNet[id].order === "undefined") {
+          localStorage.peoplesOpenDotNet[id].order = 0;
+        }
+      }
+    });
+  };
+
   $('.services-container').html(config.templates.columnsTemplate(config.templateConfig));
 
-  var services = {};
+  var services = [];
 
-  function service_up(service) {
-    var containsService = _.contains(_.keys(services), service.unique);
+  var drawService = function(service) {
+    var column = _.size(services) % config.templateConfig.columnNum;
+    $('.services-container .column.col-' + column).append(service.html);
+  };
+
+  var drawServices = function() {
+    var column;
+    for (column = 0; column < config.templateConfig.columnNum; column++) {
+      $('.services-container .column.col-' + column).html('');
+    }
+    services = _.sortBy(services, 'sortOrder');
+    var i = 0;
+    _.each(services, function(service) {
+      var column = i % config.templateConfig.columnNum;
+      $('.services-container .column.col-' + i).append(service.html);
+      i++;
+    });
+    handlers();
+  };
+
+  function serviceUp(service) {
+    var containsService = _.find(services, function(serviceIter) {
+      return serviceIter.unique === service.unique;
+    });
     if (service.txtRecord.scope === "peoplesopen.net" && !containsService) {
       service.host = service.host.replace(/\.$/, '');
 
@@ -93,26 +135,46 @@ $(function() {
         columnNum: config.columns
       }
 
-      var html = config.templates.serviceTemplate(context);
+      service.html = config.templates.serviceTemplate(context);
 
-      var column = _.size(services) % config.templateConfig.columnNum;
+      // Ok now we figure out where it should be added - we have to look at 
+      // whether or not it's been assigned an "order"
+      var id = service.unique;
+      if (typeof localStorage.peoplesOpenDotNet === "object" &&
+          typeof localStorage.peoplesOpenDotNet[id] === "object" &&
+          typeof localStorage.peoplesOpenDotNet[id].order !== "undefined") { // TODO: Add a better check for isNumber
+        
+        service.sortOrder = localStorage.peoplesOpenDotNet[id].order;
+      } else {
+        service.sortOrder = 0;
+      }
 
-      services[service.unique] = service;
+      services.push(service);
+      //drawService(service);
+      drawServices();
 
-
-      $('.services-container .column.col-' + column).append(html);
     }
   }
 
-  function service_down(service) {
+  function serviceDown(service) {
     if (typeof service.uniqueId === 'string' &&
         services[service.uniqueId] === 'object') {
-      delete services[service.uniqueId];
+
+      services = _.filter(services, function(serviceIter) {
+        return serviceIter.uniqueId !== service.uniquId;
+      });
     }
     var removeNode = $('.service-box[data-id="' + service.unique + '"]');
     if (removeNode.length > 0 ) {
       removeNode.remove();
     }
+  }
+
+  // INIT CODE:
+  if (Modernizr.localstorage) {
+    localStorage.peoplesOpenDotNet = {};
+  } else {
+    console.log("no local storage - probably will not work entirely");
   }
 
   //var sock = new SockJS.create(config.thisUrl + '/websocket');
@@ -129,9 +191,9 @@ $(function() {
     if(data.type == 'service') {
 
       if(data.action == 'up') {
-        service_up(data.service);
+        serviceUp(data.service);
       } else if(data.action == 'down') {
-        service_down(data.service);
+        serviceDown(data.service);
       }
     }
   };
