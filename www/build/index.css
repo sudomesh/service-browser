@@ -12,7 +12,7 @@
 }
 .header-container .search-bar-container {
   position: absolute;
-  left: 40px;
+  right: 40px;
   top: 10px;
   width: 20%;
 }
