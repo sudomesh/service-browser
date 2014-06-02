@@ -50,10 +50,22 @@ config.templates = {
   columnsTemplate: require('../templates/columns.html'),
 };
 
+// Adding contains to String class 
+// We may want to place this elsewhere or do this differently
+String.prototype.contains = function(it) {
+  return this.indexOf(it) != -1;
+};
+
+// Not strict about lowercase
+String.prototype.lContains = function(it) {
+  return this.toLowerCase().indexOf(it.toLowerCase()) != -1;
+};
+
 $(function() {
   var serviceBrowser = sb = {
 
     services: [],
+    displayServices: [],
 
     loadServiceOrders: function() {
       if (typeof localStorage.peoplesOpenServices !== "string") {
@@ -82,6 +94,24 @@ $(function() {
       });
     },
 
+    search: function(searchTerm) {
+      console.log(searchTerm);
+      sb.displayServices = _.filter(sb.services, function(service) {
+        if (service.name.lContains(searchTerm) ||
+            service.txtRecord.description.lContains(searchTerm) ||
+            service.link.url.lContains(searchTerm) ||
+            service.serviceClass.lContains(searchTerm)) {
+
+          return service;
+        } else {
+          return false;
+        }
+      });
+
+      sb.drawServices(true);
+ 
+    },
+
     handlers: function() {
       $('.vote-icon-container .order-icon').off('click');
       $('.vote-icon-container .order-icon').on('click', function(e) {
@@ -98,18 +128,35 @@ $(function() {
         sb.saveServiceOrders(serviceOrders);
         sb.drawServices();
       });
+
+      $('form.service-search').off('submit');
+      $('form.service-search').on('submit', function(e) {
+        e.preventDefault();
+        sb.search($('form.service-search input.search-term').val());
+        return false;
+      });    
     },
 
-    drawServices: function() {
+    drawServices: function(filtered) {
+      var filtered = (typeof filtered === "undefined") ? false : filtered;
       var column;
+
       for (column = 0; column < config.templateConfig.columnNum; column++) {
         $('.services-container .column.col-' + column).html('');
       }
-      sb.services = _.sortBy(sb.services, function(s) {
+      
+      var servicesToDraw;
+      if (filtered) {
+        servicesToDraw = sb.displayServices;
+      } else {
+        servicesToDraw = sb.displayServices = sb.services;
+      }
+
+      servicesToDraw = _.sortBy(servicesToDraw, function(s) {
         return -s.sortOrder;
       });
       var i = 0;
-      _.each(sb.services, function(service) {
+      _.each(servicesToDraw, function(service) {
   
         var context = {
           link: service.link,

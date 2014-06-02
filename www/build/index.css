@@ -1,11 +1,20 @@
-.logo h1 {
+.header-container .logo {
+  margin-top: 15px;
+}
+.header-container .logo h1 {
   font-family: "Dosis", sans-serif;
   text-align: center;
   font-size: 5em;
   margin-bottom: 20px;
 }
-.logo h1 .green {
+.header-container .logo h1 .green {
   color: #20b24b;
+}
+.header-container .search-bar-container {
+  position: absolute;
+  left: 40px;
+  top: 10px;
+  width: 20%;
 }
 .service-inner {
   background-color: #f3f3f3;

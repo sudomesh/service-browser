@@ -9,16 +9,30 @@
 
   <body>
 
-    <span class="logo">
-      <h1>PeoplesOpen.<span class="green">net</span> Service Browser</h1>
-    </span>
-
-    <div id="services" class="container-fluid">
-      <div class="row-fluid services-container">
-      </div>
+  <div class="header-container container-fluid">
+    <div class="row-fluid">
+      <span class="logo col-md-12">
+        <h1>PeoplesOpen.<span class="green">net</span> Service Browser</h1>
+      </span>
+      <span class="search-bar-container">
+        <form class="service-search">
+          <div class="input-group">
+            <input type="text" class="search-term form-control" placeholder="keywords, authors, titles...">
+            <span class="input-group-btn">
+              <button class="btn btn-default" type="submit">Search</button>
+            </span>
+          </div>
+        </form>
+      </span>
     </div>
+  </div>
 
-    <script type="text/javascript" src="build/app.js"></script>
+  <div id="services" class="container-fluid">
+    <div class="row-fluid services-container">
+    </div>
+  </div>
+
+  <script type="text/javascript" src="build/app.js"></script>
 
   </body>
 </html>
