@@ -115,6 +115,11 @@ browser.on('serviceDown', function(service) {
         });
     }
 });
+
+browser.on('error', function (err) {
+  console.log('mdns error: ' + err);
+});
+
 browser.start();
 
 var websocket = sockjs.createServer();
