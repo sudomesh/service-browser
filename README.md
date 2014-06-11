@@ -225,7 +225,6 @@ It looks like python 2.6 might be a dependency for the mdns module, in which cas
 # ToDo #
 
 * Currently only lists http/https services
-* We need to figure out a way to get proper unique ids from services 
 * Searching services
 * Organizing by category/etc.
 
