@@ -77,8 +77,8 @@ function filter(service) {
 }
 
 function createUnique(service) {
-    // TODO: This might accidentally remove other services with same name and type on different hosts - we're not 
-    // getting enough info back from mdns in case of serviceDown
+    // mdns does this great thing where they'll automatically resolve
+    // nameing conflicts so this is indeed a unique identifier even without hostname
     return service.replyDomain + service.type.protocol + '.' + encodeURIComponent(service.type.name) + '.' + service.name.replace(/ /, ''); 
 }
 
@@ -88,7 +88,6 @@ var browser = mdns.createBrowser(mdns.makeServiceType('http', 'tcp'));
 browser.on('serviceUp', function(service) {
     console.log('service coming up: ');
     console.log(service);
-    // We have to create a unique id becuase we don't have a good one from mdns2
     service.unique = createUnique(service);
     if(checkContains(service) && filter(service)) {
         services.push(service);
@@ -102,7 +101,6 @@ browser.on('serviceUp', function(service) {
 browser.on('serviceDown', function(service) {
     console.log('service coming down: ');
     console.log(service);
-    // We have to create a unique id because we're not being handed one from mdns2
     service.unique = createUnique(service);
     if(filter(service)) {
         broadcast({
