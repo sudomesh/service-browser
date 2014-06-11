@@ -187,12 +187,12 @@ $(function() {
         service.link = false;
         if(service.type.name === 'http') { 
           service.link = {
-            url: 'http://'+service.host+':'+service.port+'/',
+            url: 'http://'+service.addresses[0]+':'+service.port+'/',
             name: service.name
           };
         } else if(service.type.name === 'https') {
           service.link = {
-            url: 'https://'+service.host+':'+service.port+'/',
+            url: 'https://'+service.addresses[0]+':'+service.port+'/',
             name: service.name
           };
         } 
