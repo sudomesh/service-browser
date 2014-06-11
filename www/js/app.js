@@ -267,6 +267,8 @@ $(function() {
         console.log('close');
       };  
 
+      sb.handlers();
+
     }
   };
 
