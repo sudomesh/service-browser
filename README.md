@@ -32,6 +32,12 @@ Specify the port and hostname where you want the server to listen in config.js.
 ./index.js
 ```
 
+The service browser will be available at:
+```
+http://HOST:PORT/static
+```
+where HOST and PORT are defined in config.js
+
 # Gulp/Browserify/Bower #
 
 service-browser uses Gulp, Browserify, and Bower to manage front-end dependencies.
