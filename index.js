@@ -31,11 +31,12 @@ var express = require('express');
 var sockjs = require('sockjs');
 var mdns = require('mdns2');
 var _ = require('lodash');
+var level = require('level');
+var db = level(__dirname + '/services.db', { encoding: 'json' });
 
 var config = require('./config.js');
 
 var clients = [];
-var services = [];
 
 // send message to all clients
 function broadcast(msg) {
@@ -51,26 +52,24 @@ function broadcast(msg) {
 
 
 function send_all_services(client) {
-    var i, service;
-    for(i=0; i < services.length; i++) {
-        service = services[i];
-        client.write(JSON.stringify({
-            type: 'service',
-            action: 'up',
-            service: service
-        }));
-    }
+  var serviceStream = db.createValueStream({start: 'service!', end: 'service~'});
+  serviceStream.on('data', function (data) {
+    client.write(JSON.stringify(data));
+  });
 }
-function checkContains(service) {
-    // Check to see if we already have it in our services list
-    if (_.find(services, function(s) {
-      return s.unique === service.unique;
-    })) {
-      return false;
-    } else {
+
+
+function alreadyContains(service) {
+  // Check to see if we already have it in our services list
+  db.get(service.key, function (err) {
+    if (err) {
       return true;
+    } else {
+      return false;
     }
+  })
 }
+
 // only allow services of the types we're interested in
 function filter(service) {
     return service;
@@ -82,6 +81,12 @@ function createUnique(service) {
     return service.replyDomain + service.type.protocol + '.' + encodeURIComponent(service.type.name) + '.' + service.name.replace(/ /, ''); 
 }
 
+// level keygenerator
+function newKey(prefix) {
+  return prefix + '!' + Math.random().toString(16).slice(2);
+};
+
+
 // TODO need to listen for all service types
 // dev note: try udisks-ssh instead of http
 var browser = mdns.createBrowser(mdns.makeServiceType('http', 'tcp'));
@@ -90,14 +95,18 @@ browser.on('serviceUp', function(service) {
     console.log(service);
     service.unique = createUnique(service);
     if(checkContains(service) && filter(service)) {
-        services.push(service);
-        broadcast({
-            type: 'service',
-            action: 'up',
-            service: service
-        });
+      var newkey = newKey('service');
+      var newvalue = {
+        type: 'service',
+        action: 'up',
+        service: service
+      };
+      db.put(newkey, newvalue, function(){
+        broadcast(newvalue);
+      });
     }
 });
+
 browser.on('serviceDown', function(service) {
     console.log('service coming down: ');
     console.log(service);
@@ -108,9 +117,12 @@ browser.on('serviceDown', function(service) {
             action: 'down',
             service: service
         });
-        services = _.filter(services, function(s) {
-          return service.unique !== s.unique;
-        });
+        var serviceStream = db.createReadStream({start: 'service!', end: 'service~'});
+        serviceStream.on('data', function(data){
+          var s = data.value.service;
+          if (service.unique === s.unique)
+            db.del(data.key);
+        })
     }
 });
 
@@ -127,6 +139,7 @@ websocket.on('connection', function(conn) {
     send_all_services(conn);
     conn.on('data', function(message) {
         // nothing to do here yet
+        // store votes in leveldb
     });
     conn.on('close', function() {
         var i = clients.indexOf(conn);
