@@ -42,28 +42,41 @@ function construct_key(service) {
   return 'service!' + sufix;
 };
 
-function already_in_db(service) {
+function already_in_db(service, cbmesh) {
   // Check to see if the service is already in the db
+  // console.log("callback = " + callback);
   db.get(construct_key(service), function (err, value) {
+    var found;
     if (err) {
-      result = true;
-      //callbacks didn't work here...
-    };
+      found = false;
+    } else {
+      found = true;
+    }
+    cbmesh(found, value, err);
+
   });
 };
 
-console.log(already_in_db(services[0]), function(val){
-  return val;
+already_in_db(services[0], function(found, value, err) {
+  console.log("found: " + found);
+  console.log("val: " + value);
+  console.log("err: " + err);
 });
-already_in_db(services[0]);
-already_in_db(services[1]);
+already_in_db(services[1], function(found, value, err) {
+  console.log("found: " + found);
+  console.log("val: " + value);
+  console.log("err: " + err);
+});
+
 
 test('check if service is already in db', function (t) {
   t.plan(2);
 
   //test when service is already in db
-  t.true(already_in_db(services[0]), 'service already in db')
-  
-  //test when service is not in db
-  t.false(already_in_db(services[1]), 'service not in db')
+  already_in_db(services[0], function(found) {
+    t.true(found, 'service already in db');
+  });
+  already_in_db(services[1], function(found) {
+    t.false(found, 'service not already in db');
+  });
 });
