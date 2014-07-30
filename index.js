@@ -70,14 +70,27 @@ function send_all_services(client) {
 }
 
 function alreadyContains(service) {
-    // Check to see if we already have it in our services list
-    if (_.find(services, function(s) {
-      return s.unique === service.unique;
-    })) {
-      return false;
-    } else {
+  // Check to see if we already have it in our services list
+  if (_.find(services, function(s) {
+    return s.unique === service.unique;
+  })) {
+    return false;
+  } else {
+    return true;
+  }
+}
+
+function already_in_db(service) {
+  // Check to see if the service is already in the db
+  var serviceStream = db.createValueStream({start: 'service!', end: 'service~'});
+  serviceStream.on('data', function (data) {
+    var s = data.value.service;
+    if (service.unique === s.unique) {
       return true;
-    }
+    } else {
+      return false;
+    };
+  });
 }
 
 // only allow services of the types we're interested in
@@ -91,13 +104,19 @@ function createUnique(service) {
     return service.replyDomain + service.type.protocol + '.' + encodeURIComponent(service.type.name) + '.' + service.name.replace(/ /, ''); 
 }
 
+function newKey(prefix) {
+  var key = prefix + '!' + Math.random().toString(16).slice(2);
+  return key.toString();
+};
+
 // TODO need to listen for all service types
 // dev note: try udisks-ssh instead of http
 var browser = mdns.createBrowser(mdns.makeServiceType('http', 'tcp'));
 browser.on('serviceUp', function(service) {
-    //console.log('service coming up: ');
-    //console.log(service);
+    console.log('service coming up: ');
+    console.log(service);
     service.unique = createUnique(service);
+    //add service to the services array
     if(alreadyContains(service) && filter(service)) {
       services.push(service);
       broadcast({
@@ -106,11 +125,24 @@ browser.on('serviceUp', function(service) {
           service: service
       });
     }
+    //add service to the db
+    if(already_in_db(service) && filter(service)) {
+      var new_key = newKey('service');
+      var new_value = {
+        type: 'service',
+        action: 'up',
+        service: service
+      };
+      db.put(new_key, new_value, function () {
+        console.log('adding new service to the db');
+        broadcast(new_value);
+      });
+    }
 });
 
 browser.on('serviceDown', function(service) {
-    //console.log('service coming down: ');
-    //console.log(service);
+    console.log('service coming down: ');
+    console.log(service);
     service.unique = createUnique(service);
     if(filter(service)) {
         broadcast({
@@ -125,7 +157,7 @@ browser.on('serviceDown', function(service) {
 });
 
 browser.on('error', function (err) {
-  //console.log('mdns error: ' + err);
+  console.log('mdns error: ' + err);
 });
 
 browser.start();
@@ -133,7 +165,7 @@ browser.start();
 var websocket = sockjs.createServer();
 websocket.on('connection', function(conn) {
     clients.push(conn);
-    //console.log("New client connected ("+clients.length+" total)");
+    console.log("New client connected ("+clients.length+" total)");
     send_all_services(conn);
     conn.on('data', function(message) {
         // nothing to do here yet
@@ -143,7 +175,7 @@ websocket.on('connection', function(conn) {
         if(i && (i >= 0)) {
             clients.splice(i, 1); // remove the client
         }
-        //console.log("Client disconnected ("+clients.length+" total)");
+        console.log("Client disconnected ("+clients.length+" total)");
     });
 });
 
@@ -163,9 +195,9 @@ app.get('/nodes/:id', function(req, res){
         error(res, "node id must be specified in request");
         return;
     }
-    //console.log("retrieving node with id: " + req.params.id);
+    console.log("retrieving node with id: " + req.params.id);
 
 });
 
-//console.log('Listening on '+config.hostname+':'+config.port);
+console.log('Listening on '+config.hostname+':'+config.port);
 server.listen(config.port, config.hostname);
