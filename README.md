@@ -3,6 +3,8 @@ This is a web app for browsing services available on the [People's Open Network]
 
 It is a simple node.js/express based web app that uses mDNS/DNS-SD to listen for services and informs the web clients about them using websockets.
 
+For testing purposes, check out [Simple Service Advertisement](https://github.com/sudomesh/simple-service-advertisement) to advertise local services in order to see the browser in use.
+
 # Download #
 
 ```
