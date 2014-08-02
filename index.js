@@ -80,18 +80,36 @@ function alreadyContains(service) {
   }
 }
 
-function already_in_db(service) {
+function key_hash(str) {
+  var hash;
+  for (var i=0; i < str.length; i += 1) {
+    var chr = str.charCodeAt(i);
+    hash = ((hash << 5) - hash) + chr;
+    hash |= 0;
+  }
+  hash = Math.abs(hash).toString(16);
+  return hash;
+};
+
+function construct_key(service) {
+  var sufix = key_hash(service.unique);
+  return 'service!' + sufix;
+};
+
+function already_in_db(service, cbmesh) {
   // Check to see if the service is already in the db
-  var serviceStream = db.createValueStream({start: 'service!', end: 'service~'});
-  serviceStream.on('data', function (data) {
-    var s = data.value.service;
-    if (service.unique === s.unique) {
-      return true;
+  // console.log("callback = " + callback);
+  db.get(construct_key(service), function (err, value) {
+    var found;
+    if (err) {
+      found = false;
     } else {
-      return false;
-    };
+      found = true;
+    }
+    cbmesh(found, value, err);
+
   });
-}
+};
 
 // only allow services of the types we're interested in
 function filter(service) {
@@ -114,7 +132,8 @@ function newKey(prefix) {
 var browser = mdns.createBrowser(mdns.makeServiceType('http', 'tcp'));
 browser.on('serviceUp', function(service) {
     console.log('service coming up: ');
-    console.log(service);
+
+    //console.log(service);
     service.unique = createUnique(service);
     //add service to the services array
     if(alreadyContains(service) && filter(service)) {
@@ -125,24 +144,26 @@ browser.on('serviceUp', function(service) {
           service: service
       });
     }
+
     //add service to the db
-    if(already_in_db(service) && filter(service)) {
-      var new_key = newKey('service');
-      var new_value = {
-        type: 'service',
-        action: 'up',
-        service: service
-      };
-      db.put(new_key, new_value, function () {
-        console.log('adding new service to the db');
-        broadcast(new_value);
-      });
-    }
+    already_in_db(service, function(found) {
+      if(!found && filter(service)) {
+        var newkey = construct_key(service);
+        db.put(newkey, service, function () {
+          console.log('remembering service ' + newkey);
+          broadcast({
+              type: 'service',
+              action: 'up',
+              service: service
+          });
+        });
+      }
+    });
 });
 
 browser.on('serviceDown', function(service) {
     console.log('service coming down: ');
-    console.log(service);
+    //console.log(service);
     service.unique = createUnique(service);
     if(filter(service)) {
         broadcast({
@@ -153,9 +174,12 @@ browser.on('serviceDown', function(service) {
         services = _.filter(services, function(s) {
           return service.unique !== s.unique;
         });
+        db.del(construct_key(service), function () {
+          console.log('forggeting service ' + construct_key(service));
+        })
     }
 });
-
+ 
 browser.on('error', function (err) {
   console.log('mdns error: ' + err);
 });
