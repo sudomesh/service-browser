@@ -37,7 +37,6 @@ var db = level(__dirname + '/db/services.db', { encoding: 'json' });
 var config = require('./config.js');
 
 var clients = [];
-var services = [];
 
 // send message to all clients
 function broadcast(msg) {
@@ -52,34 +51,18 @@ function broadcast(msg) {
 }
 
 function send_all_services(client) {
-  //go broadcast all services in services array to the client
-  var i, service;
-  for(i=0; i < services.length; i++) {
-      service = services[i];
-      client.write(JSON.stringify({
-          type: 'service',
-          action: 'up',
-          service: service
-      }));
-  }
   //broadcat all the services in the db to the client
   var serviceStream = db.createValueStream({start: 'service!', end: 'service~'});
-  serviceStream.on('data', function (data) {
-    client.write(JSON.stringify(data));
+  serviceStream.on('data',function(service){
+    client.write(JSON.stringify({
+      type: 'service',
+      action: 'up',
+      service: service
+    }));
   });
 }
 
-function alreadyContains(service) {
-  // Check to see if we already have it in our services list
-  if (_.find(services, function(s) {
-    return s.unique === service.unique;
-  })) {
-    return false;
-  } else {
-    return true;
-  }
-}
-
+//could go into a module
 function key_hash(str) {
   var hash;
   for (var i=0; i < str.length; i += 1) {
@@ -98,7 +81,6 @@ function construct_key(service) {
 
 function already_in_db(service, cbmesh) {
   // Check to see if the service is already in the db
-  // console.log("callback = " + callback);
   db.get(construct_key(service), function (err, value) {
     var found;
     if (err) {
@@ -107,7 +89,6 @@ function already_in_db(service, cbmesh) {
       found = true;
     }
     cbmesh(found, value, err);
-
   });
 };
 
@@ -122,29 +103,14 @@ function createUnique(service) {
     return service.replyDomain + service.type.protocol + '.' + encodeURIComponent(service.type.name) + '.' + service.name.replace(/ /, ''); 
 }
 
-function newKey(prefix) {
-  var key = prefix + '!' + Math.random().toString(16).slice(2);
-  return key.toString();
-};
-
 // TODO need to listen for all service types
 // dev note: try udisks-ssh instead of http
 var browser = mdns.createBrowser(mdns.makeServiceType('http', 'tcp'));
 browser.on('serviceUp', function(service) {
     console.log('service coming up: ');
-
     //console.log(service);
-    service.unique = createUnique(service);
-    //add service to the services array
-    if(alreadyContains(service) && filter(service)) {
-      services.push(service);
-      broadcast({
-          type: 'service',
-          action: 'up',
-          service: service
-      });
-    }
 
+    service.unique = createUnique(service);
     //add service to the db
     already_in_db(service, function(found) {
       if(!found && filter(service)) {
@@ -170,9 +136,6 @@ browser.on('serviceDown', function(service) {
             type: 'service',
             action: 'down',
             service: service
-        });
-        services = _.filter(services, function(s) {
-          return service.unique !== s.unique;
         });
         db.del(construct_key(service), function () {
           console.log('forggeting service ' + construct_key(service));
