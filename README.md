@@ -38,6 +38,34 @@ http://HOST:PORT/static
 ```
 where HOST and PORT are defined in config.js
 
+# Test #
+
+```
+node db/db_tasks.js test clear
+node db/db_tasks.js test seed
+node test.js
+```
+
+# DB Scripts #
+
+<db> = [development, test]
+
+Dump DB to console.
+```
+node db/db_tasks.js <db> dump
+```
+
+Seed DB with services.
+```
+node db/db_tasks.js <db> seed
+```
+
+Drop all records.
+```
+node db/db_tasks.js <db> clear
+```
+
+
 # Gulp/Browserify/Bower #
 
 service-browser uses Gulp, Browserify, and Bower to manage front-end dependencies.

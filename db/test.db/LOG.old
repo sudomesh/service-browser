@@ -1,6 +1,5 @@
-2014/08/01-17:09:17.306980 b6bffb40 Recovering log #310
-2014/08/01-17:09:17.307096 b6bffb40 Level-0 table #312: started
-2014/08/01-17:09:17.319716 b6bffb40 Level-0 table #312: 324 bytes OK
-2014/08/01-17:09:17.342475 b6bffb40 Delete type=0 #310
-2014/08/01-17:09:17.342571 b6bffb40 Delete type=3 #309
-2014/08/01-17:09:17.342767 b4bfbb40 Compacting 2@0 + 0@1 files
+2014/08/01-19:06:43.264759 b6f8bb40 Recovering log #337
+2014/08/01-19:06:43.264872 b6f8bb40 Level-0 table #339: started
+2014/08/01-19:06:43.275681 b6f8bb40 Level-0 table #339: 189 bytes OK
+2014/08/01-19:06:43.295586 b6f8bb40 Delete type=0 #337
+2014/08/01-19:06:43.295701 b6f8bb40 Delete type=3 #335
