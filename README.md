@@ -48,7 +48,7 @@ node test.js
 
 # DB Scripts #
 
-<db> = [development, test]
+Available db = [development, test]
 
 Dump DB to console.
 ```
@@ -261,6 +261,9 @@ It looks like python 2.6 might be a dependency for the mdns module, in which cas
 * Currently only lists http/https services
 * Searching services
 * Organizing by category/etc.
+* On service down, remember the service but flag it as down and filter when pushing to clients.
+* Implement levedb on client and sync with on connect.
+* Save up/down votes from client.
 
 # License #
 
