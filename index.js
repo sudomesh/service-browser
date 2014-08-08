@@ -31,11 +31,12 @@ var express = require('express');
 var sockjs = require('sockjs');
 var mdns = require('mdns2');
 var _ = require('lodash');
+var level = require('level');
+var db = level(__dirname + '/db/services.db', { encoding: 'json' });
 
 var config = require('./config.js');
 
 var clients = [];
-var services = [];
 
 // send message to all clients
 function broadcast(msg) {
@@ -49,28 +50,48 @@ function broadcast(msg) {
     }
 }
 
-
 function send_all_services(client) {
-    var i, service;
-    for(i=0; i < services.length; i++) {
-        service = services[i];
-        client.write(JSON.stringify({
-            type: 'service',
-            action: 'up',
-            service: service
-        }));
-    }
+  //broadcat all the services in the db to the client
+  var serviceStream = db.createValueStream({start: 'service!', end: 'service~'});
+  serviceStream.on('data',function(service){
+    client.write(JSON.stringify({
+      type: 'service',
+      action: 'up',
+      service: service
+    }));
+  });
 }
-function checkContains(service) {
-    // Check to see if we already have it in our services list
-    if (_.find(services, function(s) {
-      return s.unique === service.unique;
-    })) {
-      return false;
+
+//could go into a module
+function key_hash(str) {
+  var hash;
+  for (var i=0; i < str.length; i += 1) {
+    var chr = str.charCodeAt(i);
+    hash = ((hash << 5) - hash) + chr;
+    hash |= 0;
+  }
+  hash = Math.abs(hash).toString(16);
+  return hash;
+};
+
+function construct_key(service) {
+  var sufix = key_hash(service.unique);
+  return 'service!' + sufix;
+};
+
+function already_in_db(service, cbmesh) {
+  // Check to see if the service is already in the db
+  db.get(construct_key(service), function (err, value) {
+    var found;
+    if (err) {
+      found = false;
     } else {
-      return true;
+      found = true;
     }
-}
+    cbmesh(found, value, err);
+  });
+};
+
 // only allow services of the types we're interested in
 function filter(service) {
     return service;
@@ -87,20 +108,28 @@ function createUnique(service) {
 var browser = mdns.createBrowser(mdns.makeServiceType('http', 'tcp'));
 browser.on('serviceUp', function(service) {
     console.log('service coming up: ');
-    console.log(service);
+    //console.log(service);
+
     service.unique = createUnique(service);
-    if(checkContains(service) && filter(service)) {
-        services.push(service);
-        broadcast({
-            type: 'service',
-            action: 'up',
-            service: service
+    //add service to the db
+    already_in_db(service, function(found) {
+      if(!found && filter(service)) {
+        var newkey = construct_key(service);
+        db.put(newkey, service, function () {
+          console.log('remembering service ' + newkey);
+          broadcast({
+              type: 'service',
+              action: 'up',
+              service: service
+          });
         });
-    }
+      }
+    });
 });
+
 browser.on('serviceDown', function(service) {
     console.log('service coming down: ');
-    console.log(service);
+    //console.log(service);
     service.unique = createUnique(service);
     if(filter(service)) {
         broadcast({
@@ -108,12 +137,12 @@ browser.on('serviceDown', function(service) {
             action: 'down',
             service: service
         });
-        services = _.filter(services, function(s) {
-          return service.unique !== s.unique;
-        });
+        db.del(construct_key(service), function () {
+          console.log('forggeting service ' + construct_key(service));
+        })
     }
 });
-
+ 
 browser.on('error', function (err) {
   console.log('mdns error: ' + err);
 });

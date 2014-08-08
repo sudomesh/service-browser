@@ -2,3 +2,7 @@
 \#*\#
 node_modules/**
 npm-debug.log
+/db/services.db/**
+/db/test.db/**
+*.swp
+
