@@ -14,6 +14,7 @@ git clone https://github.com/sudomesh/service-browser.git
 # Install dependencies #
 
 ```
+sudo apt-get install libavahi-compat-libdnssd-dev
 cd service-browser/
 npm install
 ```
