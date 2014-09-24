@@ -103,7 +103,7 @@ function createUnique(service) {
     return service.replyDomain + service.type.protocol + '.' + encodeURIComponent(service.type.name) + '.' + service.name.replace(/ /, ''); 
 }
 
-var advert = mdns.createAdvertisement('_http._tcp,_service-browser', config.port, {txtRecord: {
+var advert = mdns.createAdvertisement('_http._tcp', config.port, {txtRecord: {
     name: 'Service Browser',
     description: "Browse services on People's Open Network",
     scope: 'peoplesopen.net',
@@ -115,12 +115,9 @@ var advert = mdns.createAdvertisement('_http._tcp,_service-browser', config.port
 var browser = mdns.createBrowser(mdns.makeServiceType('http', 'tcp'));
 browser.on('serviceUp', function(service) {
     // ignore other service browsers
-    if(service.type.subtypes.indexOf('service-browser') >= 0) {
-        console.log("ignoring other service browser");
-        return;
+    if(service.txtRecord && service.txtRecord.scope && service.txtRecord.type && (service.txtRecord.scope == 'peoplesopen.net') && (service.txtRecord.type == 'service-browser')) {
+        console.log("ignoring other service browser on " + util.inspect(service.addresses));
     }
-    console.log('service coming up: ');
-    console.log(service);
 
     service.unique = createUnique(service);
     //add service to the db
