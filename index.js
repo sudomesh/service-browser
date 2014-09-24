@@ -103,12 +103,24 @@ function createUnique(service) {
     return service.replyDomain + service.type.protocol + '.' + encodeURIComponent(service.type.name) + '.' + service.name.replace(/ /, ''); 
 }
 
+var advert = mdns.createAdvertisement('_http._tcp,_service-browser', config.port, {txtRecord: {
+    name: 'Service Browser',
+    description: "Browse services on People's Open Network",
+    scope: 'peoplesopen.net',
+    type: 'service-browser'
+}});
+
 // TODO need to listen for all service types
 // dev note: try udisks-ssh instead of http
 var browser = mdns.createBrowser(mdns.makeServiceType('http', 'tcp'));
 browser.on('serviceUp', function(service) {
+    // ignore other service browsers
+    if(service.type.subtypes.indexOf('service-browser') >= 0) {
+        console.log("ignoring other service browser");
+        return;
+    }
     console.log('service coming up: ');
-    //console.log(service);
+    console.log(service);
 
     service.unique = createUnique(service);
     //add service to the db
