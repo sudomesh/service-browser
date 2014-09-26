@@ -22,7 +22,7 @@ npm install
 # Build #
 
 ```
-./node_modules/gulp/bin/gulp.js
+npm build
 ```
 
 # Setup #
@@ -32,7 +32,7 @@ Specify the port and hostname where you want the server to listen in config.js.
 # Running #
 
 ```
-./index.js
+npm start
 ```
 
 The service browser will be available at:
@@ -44,9 +44,7 @@ where HOST and PORT are defined in config.js
 # Test #
 
 ```
-node db/db_tasks.js test clear
-node db/db_tasks.js test seed
-node test.js
+npm test
 ```
 
 # DB Scripts #
