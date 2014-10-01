@@ -2,13 +2,24 @@
   "name": "service-browser",
   "version": "0.0.1",
   "description": "A web app for browsing services available on the People's Open Network",
+  "main": "index.js",
+  "scripts": {
+    "prestart": "npm install",
+    "start": "node index.js",
+    "build": "node node_modules/gulp/bin/gulp.js",
+    "testdb-clear": "node db/db_tasks.js test clear",
+    "testdb-seed": "node db/db_tasks.js test seed",
+    "test": "npm run testdb-clear && npm run testdb-seed && node test.js"
+  },
   "dependencies": {
     "express": "~3.4.8",
-    "sockjs": "^0.3.9",
+    "jquery": "~2.1.0",
+    "level": "^0.18.0",
+    "lodash": "^2.4.1",
     "mdns2": "~2.1.3",
     "process": "^0.7.0",
-    "jquery": "~2.1.0",
-    "lodash": "^2.4.1"
+    "sockjs": "^0.3.9",
+    "tape": "^2.13.4"
   },
   "repository": {
     "type": "git",

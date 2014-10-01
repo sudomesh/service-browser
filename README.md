@@ -3,6 +3,8 @@ This is a web app for browsing services available on the [People's Open Network]
 
 It is a simple node.js/express based web app that uses mDNS/DNS-SD to listen for services and informs the web clients about them using websockets.
 
+For testing purposes, check out [Simple Service Advertisement](https://github.com/sudomesh/simple-service-advertisement) to advertise local services in order to see the browser in use.
+
 # Download #
 
 ```
@@ -12,6 +14,7 @@ git clone https://github.com/sudomesh/service-browser.git
 # Install dependencies #
 
 ```
+sudo apt-get install libavahi-compat-libdnssd-dev
 cd service-browser/
 npm install
 ```
@@ -19,7 +22,7 @@ npm install
 # Build #
 
 ```
-./node_modules/gulp/bin/gulp.js
+npm build
 ```
 
 # Setup #
@@ -29,7 +32,7 @@ Specify the port and hostname where you want the server to listen in config.js.
 # Running #
 
 ```
-./index.js
+npm start
 ```
 
 The service browser will be available at:
@@ -37,6 +40,32 @@ The service browser will be available at:
 http://HOST:PORT/static
 ```
 where HOST and PORT are defined in config.js
+
+# Test #
+
+```
+npm test
+```
+
+# DB Scripts #
+
+Available db = [development, test]
+
+Dump DB to console.
+```
+node db/db_tasks.js <db> dump
+```
+
+Seed DB with services.
+```
+node db/db_tasks.js <db> seed
+```
+
+Drop all records.
+```
+node db/db_tasks.js <db> clear
+```
+
 
 # Gulp/Browserify/Bower #
 
@@ -233,6 +262,9 @@ It looks like python 2.6 might be a dependency for the mdns module, in which cas
 * Currently only lists http/https services
 * Searching services
 * Organizing by category/etc.
+* On service down, remember the service but flag it as down and filter when pushing to clients.
+* Implement levedb on client and sync with on connect.
+* Save up/down votes from client.
 
 # License #
 
