@@ -181,7 +181,7 @@ var server = http.createServer(app);
 websocket.installHandlers(server, {prefix:'/websocket'});
 
 // serve static content from the /www dir at /static
-app.use('/static/', express.static(path.join(__dirname, 'www')));
+app.use('/', express.static(path.join(__dirname, 'www')));
 
 // for parsing post request
 app.use(express.bodyParser());
